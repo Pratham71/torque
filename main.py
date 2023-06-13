@@ -5,7 +5,7 @@ from discord.ext import commands,tasks
 from itertools import cycle
 
 c='t!'
-TOKEN='MTExNTUxNzczNTg1NDY4NjIxOA.GnyN5M.KWHEU9yudNBCoXXUa_R63gePqFbqRRyeC8mOcA'
+TOKEN=''
 client=commands.Bot(command_prefix=f'{c}',intents=discord.Intents.all())
 
 bot_status = cycle(["in development"])
