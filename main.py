@@ -1,12 +1,17 @@
-import discord,time,platform,colorama,asyncio,os
+import discord,time,platform,colorama,asyncio,os,json
 "__________________"
 from colorama import Back,Fore,Style
 from discord.ext import commands,tasks
 from itertools import cycle
 
-c='t!'
+def get_prefix(client,message):
+  with open('prefixes.json','r') as f:
+    prefixes = json.load(f)
+  
+  return prefixes[str(message.guild.id)]
+
 TOKEN=''
-client=commands.Bot(command_prefix=f'{c}',intents=discord.Intents.all())
+client=commands.Bot(command_prefix=get_prefix,intents=discord.Intents.all())
 
 bot_status = cycle(["in development"])
 

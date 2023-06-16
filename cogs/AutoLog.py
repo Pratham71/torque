@@ -1,4 +1,4 @@
-import discord 
+import discord,json 
 from discord.ext import commands
 from discord.utils import find
 whitelist=[1102927006703829014,882471259231887390,746023730488148091,1102164592974639155]
@@ -12,7 +12,16 @@ class AutoLog(commands.Cog):
 
   @commands.Cog.listener()
   async def on_guild_join(self,guild):
-    whitelist=[1102927006703829014,882471259231887390,746023730488148091,1102164592974639155,1102927006703829014,746023730488148091]
+
+    with open('prefixes.json','r') as f:
+      prefixes = json.load(f)
+    
+    prefixes[str(guild.id)] = 't!'
+
+    with open('prefixes.json','w') as f:
+      json.dump(prefixes,f,indent=4)
+
+    whitelist=[1102927006703829014,882471259231887390,746023730488148091,1102164592974639155,1102927006703829014,746023730488148091,1118237629561962618]
     server_id=guild.id
     if server_id in whitelist:
       log_channel_check=discord.utils.get(guild.channels,name='log-channel')
@@ -39,6 +48,26 @@ class AutoLog(commands.Cog):
       if channel.permissions_for(guild.me).send_messages: 
         await channel.send(f"I'm not allowed to join **{guild.name}** please ask the owner to give me access to this server!")
         await guild.leave()
+        
+      with open('prefixes.json','r') as f:
+        prefixes = json.load(f)
+    
+      prefixes.pop(str(guild.id))
+
+      with open('prefixes.json','w') as f:
+        json.dump(prefixes,f,indent=4)
+
+  @commands.Cog.listener()
+  async def on_guild_remove(self,guild):
+    with open('prefixes.json','r') as f:
+      prefixes = json.load(f)
+    
+    prefixes.pop(str(guild.id))
+
+    with open('prefixes.json','w') as f:
+      json.dump(prefixes,f,indent=4)
+
+
 
   @commands.Cog.listener()
   async def on_message(self, message):
@@ -55,6 +84,8 @@ class AutoLog(commands.Cog):
       event_embed.add_field(name='Message Content:',value=message.content,inline=False)
 
       await log_channel.send(embed=event_embed)
+  
+
       
 async def setup(client):
   await client.add_cog(AutoLog(client))
