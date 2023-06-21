@@ -15,25 +15,30 @@ class BanUnban(commands.Cog):
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def ban(self,ctx,member:discord.Member,*,modreason=None):
-        if ctx.author.id == member.id:
-            await ctx.reply(f'**You cannot ban your self!**')
-        else:
-            embed = discord.Embed(title='**BANNED!**',description=f'{member.mention} has been banned from the server by {ctx.author.mention}\n**Member ID**: {member.id}\n**Reason**:{modreason}',color=discord.Color.blurple())
-            await ctx.guild.ban(member)
-            await ctx.send(embed=embed)
+      log_channel=discord.utils.get(member.guild.channels,name='mod-logs')
+      
+      if ctx.author.id == member.id:
+        await ctx.reply(f'**You cannot ban your self!**')
+      else:
+        embed = discord.Embed(title='**BANNED!**',description=f'{member.mention} has been banned from the server by {ctx.author.mention}\n**Member ID**: {member.id}\n**Reason**:{modreason}',color=discord.Color.blurple())
+        await ctx.guild.ban(member)
+        await log_channel.send(embed=embed)
+        await ctx.send(embed=embed)
     
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def unban(self,ctx,userId):
-        user = discord.Object(id=userId)
-        if ctx.author.id == userId:
-            await ctx.reply(f'**Ok sure Unbanning you!**')
-        else:
-            conf_embed = discord.Embed(title='**UN-BANNED!**',description=f'<@{userId}> has been Un banned from the server by {ctx.author.mention}',color=discord.Color.blurple())
-            await ctx.guild.unban(user)
-            await ctx.send(embed=conf_embed)
+      log_channel=discord.utils.get(ctx.guild.channels,name='mod-logs')
+      user = discord.Object(id=userId)
+      if ctx.author.id == userId:
+        await ctx.reply(f'**Ok sure Unbanning you!**')
+      else:
+        conf_embed = discord.Embed(title='**UN-BANNED!**',description=f'<@{userId}> has been Un banned from the server by {ctx.author.mention}',color=discord.Color.blurple())
+        await ctx.guild.unban(user)
+        await ctx.send(embed=conf_embed)
+        await log_channel.send(embed=conf_embed)
 
     @ban.error
     async def ban_error(self,ctx,error):

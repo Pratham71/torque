@@ -29,7 +29,6 @@ class Userinfo(commands.Cog):
         info_embed.add_field(name='Joined this server at:',value=member.joined_at.date(),inline=False)
         info_embed.add_field(name='Creation Date:',value=member.created_at.__format__('%A,%d. %B %Y @ %H:%M:%S'),inline=False)
 
-        print(f'{ctx.author} used UserInfo in {ctx.channel.name,ctx.channel.id,ctx.guild.name,ctx.guild.id}')
         await ctx.send(embed=info_embed)
     
     

@@ -1,4 +1,4 @@
-import discord,json 
+import discord,json,time
 from discord.ext import commands
 from discord.utils import find
 whitelist=[1102927006703829014,882471259231887390,746023730488148091,1102164592974639155]
@@ -74,24 +74,78 @@ class AutoLog(commands.Cog):
   async def on_message(self, message):
     if message.author == self.client.user:
       return
-    
     else:
-      log_channel = discord.utils.get(message.guild.channels, name='spam-logs')
+      return 'yes'
 
-        
-      event_embed = discord.Embed(title='Message Logged',description='Message\'s content and origin',color=discord.Color.dark_blue())
-      event_embed.add_field(name='Message Author:',value=message.author.mention,inline=False)
-      event_embed.add_field(name='Channel Origin:',value=message.channel.mention,inline=False)
-      event_embed.add_field(name='Message Content:',value=message.content,inline=False)
 
-      await log_channel.send(embed=event_embed)
   
   @commands.Cog.listener()
   async def on_message_delete(self,message):
     log_channel=discord.utils.get(message.guild.channels,name='spam-logs')
+    embed=discord.Embed(title=f'**Message deletde in channel:**{message.channel.mention}',description=f'```{message.content}```\n**Deleted by:**{message.author.mention}',color=discord.Color.magenta())
+    await log_channel.send(embed=embed)
 
-    embed=discord.Embed(title=f'**Message deleted by** @{message.author.name}#{message.author.discriminator} **in channel** {message.channel.mention}',description=f'```{message.content}```',color=discord.Color.magenta())
+  @commands.Cog.listener()
+  async def on_member_join(self,member):
+    log_channel=discord.utils.get(member.guild.channels,name='spam-logs')
+
+    embed=discord.Embed(title='**Arrival Logged**',color=discord.Color.brand_green())
+    embed.add_field(name='**Member:**',value=member.mention,inline=True)
+    embed.add_field(name='**Member ID:**',value=member.id,inline=True)
+    embed.add_field(name='**Creation Date:**',value=member.created_at.__format__('%A,%d. %B %Y @ %H:%M:%S'),inline=False)
+    embed.set_image(url=member.avatar)
     await log_channel.send(embed=embed)
   
+  @commands.Cog.listener()
+  async def on_member_remove(self,member):
+    log_channel=discord.utils.get(member.guild.channels,name='spam-logs')
+    embed=discord.Embed(title='**Departure Logged**',color=discord.Color.from_rgb(r=171,g=176,b=1))
+    embed.add_field(name='**Member:**',value=member.mention,inline=True)
+    embed.add_field(name='**Member ID:**',value=member.id,inline=True)
+    embed.add_field(name='**Creation Date:**',value=member.created_at.__format__('%A,%d. %B %Y'),inline=False)
+    embed.set_image(url=member.avatar)
+    await log_channel.send(embed=embed)
+
+  @commands.Cog.listener()
+  async def on_guild_role_create(self,role):
+    log_channel=discord.utils.get(role.guild.channels,name='spam-logs')
+
+    embed=discord.Embed(title='**Role Created**',color=discord.Color.dark_teal())
+    embed.add_field(name='**Role Name**:',value=f'{role.mention}',inline=True)
+    embed.add_field(name='**Role ID**:',value=role.id,inline=True)
+    embed.add_field(name='**Color:**',value=role.color,inline=True)
+    embed.add_field(name='**Mentionable:**',value=role.mentionable,inline=False)
+    embed.add_field(name='**Creation Date:**',value=role.created_at.__format__('**%A,%d. %B %Y**'),inline=True)
+    await log_channel.send(embed=embed)
+  
+  @commands.Cog.listener()
+  async def on_guild_role_delete(self,role):
+    log_channel=discord.utils.get(role.guild.channels,name='spam-logs')
+
+    embed=discord.Embed(title='**Role Deleted**',color=discord.Color.greyple())
+    embed.add_field(name='**Role Name**:',value=f'{role.name}',inline=True)
+    embed.add_field(name='**Role ID**:',value=role.id,inline=True)
+    await log_channel.send(embed=embed)
+
+  @commands.Cog.listener()
+  async def on_guild_channel_create(self,channel):
+    log_channel=discord.utils.get(channel.guild.channels,name='spam-logs')
+
+    embed=discord.Embed(title='**Channel Created**',color=discord.Color.teal())
+    embed.add_field(name='**Channel Name**:',value=f'{channel.mention}',inline=True)
+    embed.add_field(name='**Channel ID**:',value=f'{channel.id}',inline=True)
+    embed.add_field(name='**Channe Category**:',value=f'{channel.category}',inline=True)
+    await log_channel.send(embed=embed)
+
+  @commands.Cog.listener()
+  async def on_guild_channel_delete(self,channel):
+    log_channel=discord.utils.get(channel.guild.channels,name='spam-logs')
+
+    embed=discord.Embed(title='**Channel Deleted**',color=discord.Color.purple())
+    embed.add_field(name='**Channel Name**:',value=f'{channel.name}',inline=True)
+    embed.add_field(name='**Channel ID**:',value=f'{channel.id}',inline=True)
+    embed.add_field(name='**Channe Category**:',value=f'{channel.category}',inline=True)
+    await log_channel.send(embed=embed)
+
 async def setup(client):
   await client.add_cog(AutoLog(client))

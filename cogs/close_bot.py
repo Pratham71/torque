@@ -1,7 +1,7 @@
 import discord
 import os
 from discord.ext import commands
-ID=397679536818487296
+
 class CloseBot(commands.Cog):
   def __init__(self,client):
     self.client=client
@@ -16,11 +16,6 @@ class CloseBot(commands.Cog):
     response = "``` Going Offline ```"
     await ctx.reply(response)
     await self.client.close()
-
-  @close.error
-  async def close_error(self,ctx,error):
-    if ctx.author.id != ID:
-      await ctx.reply(f'**ERROR: Forbidden action!**')
 
 async def setup(client):
   await client.add_cog(CloseBot(client))

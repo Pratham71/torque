@@ -29,8 +29,8 @@ class AddRemoveRole(commands.Cog):
     async def removerole(self,ctx,user: discord.Member,*,role: discord.Role):
         if role in user.roles:
             await user.remove_roles(role)
-            await ctx.send(embed=embed)
             embed=discord.Embed(title='**Role Removed!**',description=f"Removed the role: {role.mention} from {user.mention}",color=discord.Color.dark_grey())
+            await ctx.send(embed=embed)
         else:
             await ctx.send(f'{user.mention} does not have the role: {role.mention}')
     
